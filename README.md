@@ -1,4 +1,6 @@
-# react-native-smart-placeholder
+# Working on it!
+
+<!-- # react-native-smart-placeholder
 
 A lightweight and intelligent React Native placeholder (skeleton loader) that automatically support NativeWind/Tailwind integration for beautiful loading states.
 
@@ -34,4 +36,4 @@ MIT
 
 ---
 
-Made with [create-react-native-library](https://github.com/callstack/react-native-builder-bob)
+Made with [create-react-native-library](https://github.com/callstack/react-native-builder-bob) -->
