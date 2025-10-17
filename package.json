@@ -16,6 +16,14 @@
     "type": "git",
     "url": "github.com/devshojol/react-native-smart-placeholder.git"
   },
+  "bugs": {
+    "url": "https://github.com/devshojol/react-native-smart-placeholder/issues"
+  },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/devshojol"
+  },
+  "homepage": "https://devshojol.github.io/react-native-smart-placeholder/docs",
   "files": [
     "lib",
     "types"
