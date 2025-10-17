@@ -8,11 +8,20 @@ Perfect for creating **beautiful loading states** with full control over color, 
 
 ```bash
 npm install react-native-smart-placeholder
+
+```
+
+## Import
+
+```bash
+import SmartPlaceholder from "react-native-smart-placeholder";
 ```
 
 ## Example
 
-![Demo](https://drive.google.com/uc?export=view&id=1ABCdEFghIJKlmNOPqrSTuvwXYz)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/devshojol/react-native-smart-placeholder/refs/heads/main/assets/demo.gif" width="300" alt="Demo" />
+</p>
 
 ## Usage
 
