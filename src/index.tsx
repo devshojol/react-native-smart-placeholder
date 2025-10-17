@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Animated, Easing, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
+import { Animated, DimensionValue, Easing, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 
 interface SmartPlaceholderProps {
   width?: number | string;
@@ -77,7 +77,12 @@ const SmartPlaceholder: React.FC<SmartPlaceholderProps> = ({
     });
 
     return (
-      <View style={[styles.container, { width, height, backgroundColor, borderRadius }, style]}>
+      <View
+        style={[
+          styles.container,
+          { width: width as DimensionValue, height: height as DimensionValue, backgroundColor, borderRadius },
+          style,
+        ]}>
         <Animated.View
           style={[
             styles.shimmer,
@@ -108,7 +113,12 @@ const SmartPlaceholder: React.FC<SmartPlaceholderProps> = ({
     });
 
     return (
-      <View style={[styles.container, { width, height, backgroundColor, borderRadius }, style]}>
+      <View
+        style={[
+          styles.container,
+          { width: width as DimensionValue, height: height as DimensionValue, backgroundColor, borderRadius },
+          style,
+        ]}>
         <Animated.View
           style={[
             styles.radialLayer,
@@ -137,7 +147,12 @@ const SmartPlaceholder: React.FC<SmartPlaceholderProps> = ({
     });
 
     return (
-      <View style={[styles.container, { width, height, backgroundColor, borderRadius }, style]}>
+      <View
+        style={[
+          styles.container,
+          { width: width as DimensionValue, height: height as DimensionValue, backgroundColor, borderRadius },
+          style,
+        ]}>
         <Animated.View
           style={[
             styles.shimmer,
@@ -167,7 +182,12 @@ const SmartPlaceholder: React.FC<SmartPlaceholderProps> = ({
     });
 
     return (
-      <View style={[styles.container, { width, height, backgroundColor, borderRadius }, style]}>
+      <View
+        style={[
+          styles.container,
+          { width: width as DimensionValue, height: height as DimensionValue, backgroundColor, borderRadius },
+          style,
+        ]}>
         <Animated.View
           style={[
             styles.shimmer,
@@ -197,8 +217,8 @@ const SmartPlaceholder: React.FC<SmartPlaceholderProps> = ({
         style={[
           styles.container,
           {
-            width,
-            height,
+            width: width as DimensionValue,
+            height: height as DimensionValue,
             backgroundColor: animationColor,
             borderRadius,
             opacity,
@@ -224,8 +244,8 @@ const SmartPlaceholder: React.FC<SmartPlaceholderProps> = ({
         style={[
           styles.container,
           {
-            width,
-            height,
+            width: width as DimensionValue,
+            height: height as DimensionValue,
             backgroundColor: bgColor,
             borderRadius,
           },
@@ -245,8 +265,8 @@ const SmartPlaceholder: React.FC<SmartPlaceholderProps> = ({
         style={[
           styles.container,
           {
-            width,
-            height,
+            width: width as DimensionValue,
+            height: height as DimensionValue,
             backgroundColor,
             borderRadius,
           },
