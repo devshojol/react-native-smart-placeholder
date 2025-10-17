@@ -23,7 +23,7 @@
     "type": "github",
     "url": "https://github.com/sponsors/devshojol"
   },
-  "homepage": "https://devshojol.github.io/react-native-smart-placeholder/docs",
+  "homepage": "https://devshojol.github.io/react-native-smart-placeholder",
   "files": [
     "lib",
     "types"
