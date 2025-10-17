@@ -17,8 +17,8 @@ interface SmartPlaceholderProps {
  *
  * @param width - Width of the placeholder (default: 100)
  * @param height - Height of the placeholder (default: 20)
- * @param backgroundColor - Base background color (default: '#E1E9EE')
- * @param animationColor - Shimmer/animation color (default: '#F2F8FC')
+ * @param backgroundColor - Base background color (default: '#8485852c')
+ * @param animationColor - Shimmer/animation color (default: '#83848578')
  * @param animationStyle - Type of animation to display (default: 'linear')
  * @param borderRadius - Border radius of the placeholder (default: 4)
  * @param style - Additional custom styles for the container

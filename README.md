@@ -56,8 +56,8 @@ export default ExampleScreen;
 | ----------------- | --------------------------------------------------------------------------------------- | ----------- | ----------------------------------- |
 | `width`           | `number \| string`                                                                      | `100`       | Width of the placeholder            |
 | `height`          | `number \| string`                                                                      | `20`        | Height of the placeholder           |
-| `backgroundColor` | `string`                                                                                | `#E1E9EE`   | Base background color               |
-| `animationColor`  | `string`                                                                                | `#F2F8FC`   | Shimmer/animation highlight color   |
+| `backgroundColor` | `string`                                                                                | `#8485852c` | Base background color               |
+| `animationColor`  | `string`                                                                                | `#83848578` | Shimmer/animation highlight color   |
 | `animationStyle`  | `"linear" \| "radial" \| "directional" \| "reverse" \| "pulse" \| "fade" \| "skeleton"` | `"linear"`  | Type of animation style             |
 | `borderRadius`    | `number`                                                                                | `4`         | Border radius for rounded corners   |
 | `style`           | `StyleProp<ViewStyle>`                                                                  | `undefined` | Custom style override for container |
