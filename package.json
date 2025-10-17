@@ -1,7 +1,7 @@
 {
   "name": "react-native-smart-placeholder",
-  "version": "1.0.3",
-  "description": "A lightweight and intelligent React Native placeholder (skeleton loader) that automatically support NativeWind/Tailwind integration for beautiful loading states.",
+  "version": "1.1.0",
+  "description": "Beautiful, customizable shimmer and skeleton loaders for React Native — lightweight, fast, and designed for modern loading experiences.",
   "main": "lib/index.js",
   "types": "types/index.d.ts",
   "directories": {
@@ -39,6 +39,7 @@
   },
   "peerDependencies": {
     "react": ">=16.8.0",
-    "react-native": ">=0.60.0"
+    "react-native": ">=0.60.0",
+    "react-native-reanimated": "^3.19.3"
   }
 }
