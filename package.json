@@ -1,6 +1,6 @@
 {
   "name": "react-native-smart-placeholder",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Beautiful, customizable shimmer and skeleton loaders for React Native — lightweight, fast, and designed for modern loading experiences.",
   "main": "lib/index.js",
   "types": "types/index.d.ts",
@@ -23,7 +23,7 @@
     "type": "github",
     "url": "https://github.com/sponsors/devshojol"
   },
-  "homepage": "https://devshojol.github.io/react-native-smart-placeholder",
+  "homepage": "https://github.com/devshojol/react-native-smart-placeholder",
   "files": [
     "lib",
     "types"
