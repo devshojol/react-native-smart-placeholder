@@ -1,0 +1,64 @@
+name: Auto Publish NPM Package
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Determine version bump type
+        id: bump
+        run: |
+          COMMITS=$(git log -1 --pretty=%B)
+          echo "Last commit message: $COMMITS"
+
+          if echo "$COMMITS" | grep -qiE "BREAKING CHANGE|major:"; then
+            echo "bump=major" >> $GITHUB_OUTPUT
+          elif echo "$COMMITS" | grep -qiE "feat|minor:"; then
+            echo "bump=minor" >> $GITHUB_OUTPUT
+          elif echo "$COMMITS" | grep -qiE "fix|patch:"; then
+            echo "bump=patch" >> $GITHUB_OUTPUT
+          else
+            echo "bump=none" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Bump version
+        if: steps.bump.outputs.bump != 'none'
+        run: |
+          npm version ${{ steps.bump.outputs.bump }} -m "chore(release): v%s"
+        env:
+          GIT_AUTHOR_NAME: github-actions[bot]
+          GIT_AUTHOR_EMAIL: github-actions[bot]@users.noreply.github.com
+          GIT_COMMITTER_NAME: github-actions[bot]
+          GIT_COMMITTER_EMAIL: github-actions[bot]@users.noreply.github.com
+
+      - name: Build package
+        run: npm run build
+
+      - name: Publish to npm
+        if: steps.bump.outputs.bump != 'none'
+        run: npm publish --access public --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Push tags
+        if: steps.bump.outputs.bump != 'none'
+        run: |
+          git push origin main --follow-tags
