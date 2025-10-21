@@ -6,77 +6,73 @@ We want this community to be friendly and respectful to each other. Please follo
 
 ## Development workflow
 
-This project is a monorepo managed using [Yarn workspaces](https://yarnpkg.com/features/workspaces). It contains the following packages:
+### Setting up local development
 
-- The library package in the root directory.
-- An example app in the `example/` directory.
+To develop and test this library locally, follow these steps:
 
-To get started with the project, make sure you have the correct version of [Node.js](https://nodejs.org/) installed. See the [`.nvmrc`](./.nvmrc) file for the version used in this project.
+1. **Create a new React Native Expo app**
 
-Run `yarn` in the root directory to install the required dependencies for each package:
-
-```sh
-yarn
+```bash
+   npx create-expo-app MyApp
+   cd MyApp
 ```
 
-> Since the project relies on Yarn workspaces, you cannot use [`npm`](https://github.com/npm/cli) for development without manually migrating.
+2. **Set up the modules folder structure**
 
-The [example app](/example/) demonstrates usage of the library. You need to run it to test any changes you make.
-
-It is configured to use the local version of the library, so any changes you make to the library's source code will be reflected in the example app. Changes to the library's JavaScript code will be reflected in the example app without a rebuild, but native code changes will require a rebuild of the example app.
-
-You can use various commands from the root directory to work with the project.
-
-To start the packager:
-
-```sh
-yarn example start
+```
+   MyApp
+   ├── node_modules
+   ├── modules              # folder for your local libraries
+   │   └── react-native-smart-placeholder  # local library
+   ├── android
+   ├── ios
+   ├── src
+   ├── index.js
+   └── package.json
 ```
 
-To run the example app on Android:
+3. **Clone the library into the modules folder**
 
-```sh
-yarn example android
+```bash
+   mkdir modules
+   cd modules
+   git clone https://github.com/your-username/react-native-smart-placeholder.git
+   cd ..
 ```
 
-To run the example app on iOS:
+4. **Add the library as a local dependency**
 
-```sh
-yarn example ios
+   In your app's `package.json`, add:
+
+```json
+   "dependencies": {
+     "react-native-smart-placeholder": "file:./modules/react-native-smart-placeholder"
+   }
 ```
 
-To confirm that the app is running with the new architecture, you can check the Metro logs for a message like this:
+5. **Install dependencies**
 
-```sh
-Running "SmartPlaceholderExample" with {"fabric":true,"initialProps":{"concurrentRoot":true},"rootTag":1}
+```bash
+   npm install
 ```
 
-Note the `"fabric":true` and `"concurrentRoot":true` properties.
+6. **Import and use the library**
 
-To run the example app on Web:
-
-```sh
-yarn example web
+```javascript
+import SmartPlaceholder from "react-native-smart-placeholder";
 ```
 
-Make sure your code passes TypeScript and ESLint. Run the following to verify:
+7. **Watch for changes during development**
 
-```sh
-yarn typecheck
-yarn lint
+   When you make changes to the library code, run this command inside the `react-native-smart-placeholder` directory:
+
+```bash
+   npm run watch
 ```
 
-To fix formatting errors, run the following:
+This will automatically rebuild the library when you make changes.
 
-```sh
-yarn lint --fix
-```
-
-Remember to add tests for your change if possible. Run the unit tests by:
-
-```sh
-yarn test
-```
+For more details, refer to the [React Native local library setup guide](https://reactnative.dev/docs/legacy/local-library-setup?package-manager=npm).
 
 ### Commit message convention
 
@@ -84,42 +80,28 @@ We follow the [conventional commits specification](https://www.conventionalcommi
 
 - `fix`: bug fixes, e.g. fix crash due to deprecated method.
 - `feat`: new features, e.g. add new method to the module.
-- `refactor`: code refactor, e.g. migrate from class components to hooks.
-- `docs`: changes into documentation, e.g. add usage example for the module.
-- `test`: adding or updating tests, e.g. add integration tests using detox.
+- `major`: when breaking change.
 - `chore`: tooling changes, e.g. change CI config.
 
-Our pre-commit hooks verify that your commit message matches this format when committing.
+**Version bumping based on commits:**
+
+- `BREAKING CHANGE` or `major:` prefix → major version bump (e.g., 1.0.0 → 2.0.0)
+- `feat` or `minor:` prefix → minor version bump (e.g., 1.0.0 → 1.1.0)
+- `fix` or `patch:` prefix → patch version bump (e.g., 1.0.0 → 1.0.1)
+
+**Examples:**
+
+```bash
+git commit -m "feat: add shimmer animation support"
+git commit -m "fix: resolve layout issue on Android"
+git commit -m "BREAKING CHANGE: remove deprecated API methods"
+```
 
 ### Linting and tests
 
 [ESLint](https://eslint.org/), [Prettier](https://prettier.io/), [TypeScript](https://www.typescriptlang.org/)
 
-We use [TypeScript](https://www.typescriptlang.org/) for type checking, [ESLint](https://eslint.org/) with [Prettier](https://prettier.io/) for linting and formatting the code, and [Jest](https://jestjs.io/) for testing.
-
-Our pre-commit hooks verify that the linter and tests pass when committing.
-
-### Publishing to npm
-
-We use [release-it](https://github.com/release-it/release-it) to make it easier to publish new versions. It handles common tasks like bumping version based on semver, creating tags and releases etc.
-
-To publish new versions, run the following:
-
-```sh
-yarn release
-```
-
-### Scripts
-
-The `package.json` file contains various scripts for common tasks:
-
-- `yarn`: setup project by installing dependencies.
-- `yarn typecheck`: type-check files with TypeScript.
-- `yarn lint`: lint files with ESLint.
-- `yarn test`: run unit tests with Jest.
-- `yarn example start`: start the Metro server for the example app.
-- `yarn example android`: run the example app on Android.
-- `yarn example ios`: run the example app on iOS.
+We use [TypeScript](https://www.typescriptlang.org/) for type checking, [ESLint](https://eslint.org/) with [Prettier](https://prettier.io/) for linting and formatting the code.
 
 ### Sending a pull request
 
