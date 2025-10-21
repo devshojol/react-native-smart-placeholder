@@ -1,25 +1,17 @@
 {
+  "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "target": "ES5",
-    "module": "ESNext",
-    "jsx": "react",
-    "declaration": true,
-    "declarationDir": "types",
-    "outDir": "lib",
     "strict": true,
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "resolveJsonModule": true,
-    "allowSyntheticDefaultImports": true
+    "paths": {
+      "@/*": [
+        "./*"
+      ]
+    }
   },
   "include": [
-    "src"
-  ],
-  "exclude": [
-    "node_modules",
-    "lib",
-    "types",
-    "example"
+    "**/*.ts",
+    "**/*.tsx",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts"
   ]
 }
