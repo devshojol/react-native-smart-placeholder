@@ -1,5 +1,7 @@
-import React, { useEffect } from "react";
+import { LinearGradient } from "expo-linear-gradient";
+import React, { useEffect, useRef } from "react";
 import { Animated, DimensionValue, Easing, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
+import { controlColorOpacity } from "./utility";
 
 interface SmartPlaceholderProps {
   width?: number | string;
@@ -15,43 +17,64 @@ interface SmartPlaceholderProps {
  * SmartPlaceholder Component
  *
  * A fully customizable shimmer/placeholder component for React Native with multiple animation styles.
- * Uses only React Native's Animated API - no external dependencies required.
+ * Uses LinearGradient from expo-linear-gradient for smooth shimmer effects.
  *
- * @param width - Width of the placeholder (default: 100)
- * @param height - Height of the placeholder (default: 20)
- * @param backgroundColor - Base background color (default: '#8485852c')
- * @param animationColor - Shimmer/animation color (default: '#83848578')
- * @param animationStyle - Type of animation to display (default: 'linear')
+ * @param width - Width of the placeholder (default: 300)
+ * @param height - Height of the placeholder (default: 200)
+ * @param backgroundColor - Base background color (default: '#E1E9EE')
+ * @param animationColor - Shimmer/animation color (default: 'rgba(255, 255, 255, 0.4)')
+ * @param animationStyle - Type of animation to display (default: 'fade')
  * @param borderRadius - Border radius of the placeholder (default: 4)
  * @param style - Additional custom styles for the container
  */
 const SmartPlaceholder: React.FC<SmartPlaceholderProps> = ({
-  width = 100,
-  height = 20,
-  backgroundColor = "#8485852c",
-  animationColor = "#83848578",
+  width = 300,
+  height = 200,
+  backgroundColor = "#bebebeff",
+  animationColor = "rgba(255, 255, 255, 1)",
   animationStyle = "fade",
   borderRadius = 4,
   style,
 }) => {
-  // Animated value for all animation types
-  const animatedValue = React.useRef(new Animated.Value(0)).current;
+  const animatedValue = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    // Skip animation for skeleton style
     if (animationStyle === "skeleton") {
       return;
     }
 
-    // Configure animation based on style
-    const duration = animationStyle === "pulse" || animationStyle === "fade" ? 1500 : 1200;
+    let duration: number;
+    let easing: any;
+
+    switch (animationStyle) {
+      case "pulse":
+        duration = 1800;
+        easing = Easing.inOut(Easing.ease);
+        break;
+      case "fade":
+        duration = 2000;
+        easing = Easing.inOut(Easing.sin);
+        break;
+      case "radial":
+        duration = 1600;
+        easing = Easing.inOut(Easing.quad);
+        break;
+      case "directional":
+      case "reverse":
+        duration = 1400;
+        easing = Easing.inOut(Easing.cubic);
+        break;
+      default: // linear
+        duration = 1500;
+        easing = Easing.bezier(0.4, 0, 0.6, 1);
+    }
 
     const animation = Animated.loop(
       Animated.timing(animatedValue, {
         toValue: 1,
         duration,
-        easing: animationStyle === "pulse" ? Easing.ease : Easing.linear,
-        useNativeDriver: false, // Required for positioning and color animations
+        easing,
+        useNativeDriver: true,
       })
     );
 
@@ -64,16 +87,14 @@ const SmartPlaceholder: React.FC<SmartPlaceholderProps> = ({
   }, [animationStyle, animatedValue]);
 
   /**
-   * Render Linear Shimmer Animation
-   * Animates a colored bar from left to right across the placeholder
+   * Render Linear Shimmer Animation with Gradient
    */
   const renderLinear = () => {
-    const containerWidth = typeof width === "number" ? width : 100;
-    const shimmerWidth = containerWidth * 0.3; // Shimmer is 30% of container width
+    const containerWidth = typeof width === "number" ? width : 300;
 
     const translateX = animatedValue.interpolate({
       inputRange: [0, 1],
-      outputRange: [-shimmerWidth, containerWidth],
+      outputRange: [-containerWidth * 1.5, containerWidth * 1.5],
     });
 
     return (
@@ -83,16 +104,21 @@ const SmartPlaceholder: React.FC<SmartPlaceholderProps> = ({
           { width: width as DimensionValue, height: height as DimensionValue, backgroundColor, borderRadius },
           style,
         ]}>
-        <Animated.View
-          style={[
-            styles.shimmer,
-            {
-              transform: [{ translateX }],
-              width: shimmerWidth,
-              backgroundColor: animationColor,
-            },
-          ]}
-        />
+        <Animated.View style={[StyleSheet.absoluteFill, { transform: [{ translateX }] }]}>
+          <LinearGradient
+            colors={[
+              controlColorOpacity(animationColor, 0),
+              controlColorOpacity(animationColor, 0),
+              animationColor,
+              controlColorOpacity(animationColor, 0),
+              controlColorOpacity(animationColor, 0),
+            ]}
+            locations={[0, 0.2, 0.5, 0.8, 1]}
+            start={{ x: 0, y: 0.5 }}
+            end={{ x: 1, y: 0.5 }}
+            style={styles.gradient}
+          />
+        </Animated.View>
       </View>
     );
   };
@@ -103,13 +129,13 @@ const SmartPlaceholder: React.FC<SmartPlaceholderProps> = ({
    */
   const renderRadial = () => {
     const scale = animatedValue.interpolate({
-      inputRange: [0, 0.5, 1],
-      outputRange: [0.5, 1.5, 0.5],
+      inputRange: [0, 0.3, 0.7, 1],
+      outputRange: [0, 1.2, 1.2, 0],
     });
 
     const opacity = animatedValue.interpolate({
-      inputRange: [0, 0.5, 1],
-      outputRange: [0.3, 1, 0.3],
+      inputRange: [0, 0.2, 0.5, 0.8, 1],
+      outputRange: [0, 0.6, 1, 0.6, 0],
     });
 
     return (
@@ -123,6 +149,7 @@ const SmartPlaceholder: React.FC<SmartPlaceholderProps> = ({
           style={[
             styles.radialLayer,
             {
+              borderRadius,
               transform: [{ scale }],
               opacity,
               backgroundColor: animationColor,
@@ -134,16 +161,14 @@ const SmartPlaceholder: React.FC<SmartPlaceholderProps> = ({
   };
 
   /**
-   * Render Directional Shimmer Animation
-   * Animates a colored bar from top to bottom
+   * Render Directional Shimmer Animation (Top to Bottom) with Gradient
    */
   const renderDirectional = () => {
-    const containerHeight = typeof height === "number" ? height : 20;
-    const shimmerHeight = containerHeight * 0.3; // Shimmer is 30% of container height
+    const containerHeight = typeof height === "number" ? height : 200;
 
     const translateY = animatedValue.interpolate({
       inputRange: [0, 1],
-      outputRange: [-shimmerHeight, containerHeight],
+      outputRange: [-containerHeight, containerHeight],
     });
 
     return (
@@ -153,32 +178,27 @@ const SmartPlaceholder: React.FC<SmartPlaceholderProps> = ({
           { width: width as DimensionValue, height: height as DimensionValue, backgroundColor, borderRadius },
           style,
         ]}>
-        <Animated.View
-          style={[
-            styles.shimmer,
-            {
-              transform: [{ translateY }],
-              height: shimmerHeight,
-              width: "100%",
-              backgroundColor: animationColor,
-            },
-          ]}
-        />
+        <Animated.View style={[StyleSheet.absoluteFill, { transform: [{ translateY }] }]}>
+          <LinearGradient
+            colors={[controlColorOpacity(animationColor, 1), animationColor, controlColorOpacity(animationColor, 1)]}
+            start={{ x: 0.5, y: 0 }}
+            end={{ x: 0.5, y: 1 }}
+            style={styles.gradient}
+          />
+        </Animated.View>
       </View>
     );
   };
 
   /**
-   * Render Reverse Shimmer Animation
-   * Animates a colored bar from right to left (reverse of linear)
+   * Render Reverse Shimmer Animation (Right to Left) with Gradient
    */
   const renderReverse = () => {
-    const containerWidth = typeof width === "number" ? width : 100;
-    const shimmerWidth = containerWidth * 0.3; // Shimmer is 30% of container width
+    const containerWidth = typeof width === "number" ? width : 300;
 
     const translateX = animatedValue.interpolate({
       inputRange: [0, 1],
-      outputRange: [containerWidth, -shimmerWidth],
+      outputRange: [containerWidth * 1.5, -containerWidth * 1.5],
     });
 
     return (
@@ -188,28 +208,37 @@ const SmartPlaceholder: React.FC<SmartPlaceholderProps> = ({
           { width: width as DimensionValue, height: height as DimensionValue, backgroundColor, borderRadius },
           style,
         ]}>
-        <Animated.View
-          style={[
-            styles.shimmer,
-            {
-              transform: [{ translateX }],
-              width: shimmerWidth,
-              backgroundColor: animationColor,
-            },
-          ]}
-        />
+        <Animated.View style={[StyleSheet.absoluteFill, { transform: [{ translateX }] }]}>
+          <LinearGradient
+            colors={[
+              controlColorOpacity(animationColor, 0),
+              controlColorOpacity(animationColor, 0),
+              animationColor,
+              controlColorOpacity(animationColor, 0),
+              controlColorOpacity(animationColor, 0),
+            ]}
+            locations={[0, 0.2, 0.5, 0.8, 1]}
+            start={{ x: 0, y: 0.5 }}
+            end={{ x: 1, y: 0.5 }}
+            style={styles.gradient}
+          />
+        </Animated.View>
       </View>
     );
   };
 
   /**
    * Render Pulse Animation
-   * Fades opacity in and out smoothly
    */
   const renderPulse = () => {
     const opacity = animatedValue.interpolate({
       inputRange: [0, 0.5, 1],
       outputRange: [0.3, 1, 0.3],
+    });
+
+    const scale = animatedValue.interpolate({
+      inputRange: [0, 0.5, 1],
+      outputRange: [0.98, 1, 0.98],
     });
 
     return (
@@ -222,6 +251,7 @@ const SmartPlaceholder: React.FC<SmartPlaceholderProps> = ({
             backgroundColor: animationColor,
             borderRadius,
             opacity,
+            transform: [{ scale }],
           },
           style,
         ]}
@@ -236,7 +266,7 @@ const SmartPlaceholder: React.FC<SmartPlaceholderProps> = ({
   const renderFade = () => {
     const bgColor = animatedValue.interpolate({
       inputRange: [0, 0.5, 1],
-      outputRange: [backgroundColor, animationColor, backgroundColor],
+      outputRange: [controlColorOpacity(animationColor, 3), animationColor, controlColorOpacity(animationColor, 3)],
     });
 
     return (
@@ -257,7 +287,6 @@ const SmartPlaceholder: React.FC<SmartPlaceholderProps> = ({
 
   /**
    * Render Skeleton (Static)
-   * No animation, just a static placeholder
    */
   const renderSkeleton = () => {
     return (
@@ -276,7 +305,6 @@ const SmartPlaceholder: React.FC<SmartPlaceholderProps> = ({
     );
   };
 
-  // Select appropriate render method based on animation style
   switch (animationStyle) {
     case "linear":
       return renderLinear();
@@ -301,11 +329,10 @@ const styles = StyleSheet.create({
   container: {
     overflow: "hidden",
   },
-  shimmer: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    bottom: 0,
+  gradient: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
   },
   radialLayer: {
     position: "absolute",
@@ -313,9 +340,12 @@ const styles = StyleSheet.create({
     left: "50%",
     width: "100%",
     height: "100%",
-    borderRadius: 9999,
     marginLeft: "-50%",
     marginTop: "-50%",
+  },
+  radialGradient: {
+    flex: 1,
+    borderRadius: 9999,
   },
 });
 

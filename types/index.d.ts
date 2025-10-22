@@ -13,13 +13,13 @@ interface SmartPlaceholderProps {
  * SmartPlaceholder Component
  *
  * A fully customizable shimmer/placeholder component for React Native with multiple animation styles.
- * Uses only React Native's Animated API - no external dependencies required.
+ * Uses LinearGradient from expo-linear-gradient for smooth shimmer effects.
  *
- * @param width - Width of the placeholder (default: 100)
- * @param height - Height of the placeholder (default: 20)
- * @param backgroundColor - Base background color (default: '#8485852c')
- * @param animationColor - Shimmer/animation color (default: '#83848578')
- * @param animationStyle - Type of animation to display (default: 'linear')
+ * @param width - Width of the placeholder (default: 300)
+ * @param height - Height of the placeholder (default: 200)
+ * @param backgroundColor - Base background color (default: '#E1E9EE')
+ * @param animationColor - Shimmer/animation color (default: 'rgba(255, 255, 255, 0.4)')
+ * @param animationStyle - Type of animation to display (default: 'fade')
  * @param borderRadius - Border radius of the placeholder (default: 4)
  * @param style - Additional custom styles for the container
  */
