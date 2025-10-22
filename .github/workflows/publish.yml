@@ -9,7 +9,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      packages: write
 
     steps:
       - name: Checkout repository
@@ -43,15 +42,11 @@ jobs:
             echo "bump=none" >> $GITHUB_OUTPUT
           fi
 
-      - name: Configure Git
+      - name: Bump version
         if: steps.bump.outputs.bump != 'none'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Bump version
-        if: steps.bump.outputs.bump != 'none'
-        run: |
           npm version ${{ steps.bump.outputs.bump }} -m "chore(release): v%s"
 
       - name: Build package
