@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "github.com/devshojol/react-native-smart-placeholder.git"
+    "url": "git+https://github.com/devshojol/react-native-smart-placeholder.git"
   },
   "bugs": {
     "url": "https://github.com/devshojol/react-native-smart-placeholder/issues"
