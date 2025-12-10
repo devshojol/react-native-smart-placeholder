@@ -1,4 +1,4 @@
-name: Publish NPM Package
+name: Auto Publish NPM Package
 
 on:
   push:
@@ -26,7 +26,34 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Check if should skip
+        id: check
+        run: |
+          LAST_COMMIT=$(git log -1 --pretty=%B)
+          if echo "$LAST_COMMIT" | grep -q "chore(release):"; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+            echo "Skipping - last commit was a release"
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check if version already published
+        if: steps.check.outputs.skip != 'true'
+        id: version_check
+        run: |
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          PACKAGE_NAME=$(node -p "require('./package.json').name")
+
+          if npm view $PACKAGE_NAME@$CURRENT_VERSION version 2>/dev/null; then
+            echo "needs_bump=true" >> $GITHUB_OUTPUT
+            echo "Version $CURRENT_VERSION already exists on npm"
+          else
+            echo "needs_bump=false" >> $GITHUB_OUTPUT
+            echo "Version $CURRENT_VERSION is new"
+          fi
+
       - name: Determine version bump type
+        if: steps.check.outputs.skip != 'true' && steps.version_check.outputs.needs_bump == 'true'
         id: bump
         run: |
           COMMITS=$(git log -1 --pretty=%B)
@@ -34,31 +61,33 @@ jobs:
 
           if echo "$COMMITS" | grep -qiE "BREAKING CHANGE|major:"; then
             echo "bump=major" >> $GITHUB_OUTPUT
+            echo "Version bump: MAJOR"
           elif echo "$COMMITS" | grep -qiE "feat|minor:"; then
             echo "bump=minor" >> $GITHUB_OUTPUT
-          elif echo "$COMMITS" | grep -qiE "fix|patch:"; then
-            echo "bump=patch" >> $GITHUB_OUTPUT
+            echo "Version bump: MINOR"
           else
-            echo "bump=none" >> $GITHUB_OUTPUT
+            echo "bump=patch" >> $GITHUB_OUTPUT
+            echo "Version bump: PATCH (default)"
           fi
 
       - name: Bump version
-        if: steps.bump.outputs.bump != 'none'
+        if: steps.check.outputs.skip != 'true' && steps.version_check.outputs.needs_bump == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          npm version ${{ steps.bump.outputs.bump }} -m "chore(release): v%s"
+          npm version ${{ steps.bump.outputs.bump }} -m "chore(release): v%s [skip ci]"
 
       - name: Build package
+        if: steps.check.outputs.skip != 'true'
         run: npm run build
 
       - name: Publish to npm
-        if: steps.bump.outputs.bump != 'none'
+        if: steps.check.outputs.skip != 'true'
         run: npm publish --access public --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Push tags
-        if: steps.bump.outputs.bump != 'none'
+        if: steps.check.outputs.skip != 'true' && steps.version_check.outputs.needs_bump == 'true'
         run: |
           git push origin main --follow-tags
