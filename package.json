@@ -4,9 +4,6 @@
   "description": "Beautiful, customizable shimmer and skeleton loaders for React Native — lightweight, fast, and designed for modern loading experiences.",
   "main": "lib/index.js",
   "types": "types/index.d.ts",
-  "directories": {
-    "example": "example"
-  },
   "scripts": {
     "build": "tsc",
     "prepare": "npm run build",
